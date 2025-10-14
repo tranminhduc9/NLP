@@ -50,6 +50,18 @@ NLP
         + [^\w\s] để bắt các ký tự đặc biệt và dấu câu.
  - Cách tiếp cận này giúp tokenizer xử lý văn bản chính xác hơn so với tách theo khoảng trắng.
 
+## Cách chạy:
+1. Cài đặt môi trường:
+   ```bash
+   pip install -r requirements.txt
+    ```
+2. Chạy test:
+    - Lab 1:
+    ```bash
+    python -m test.lab1_test
+    ```
+
+
 ## Kết quả:
  
 ### 1. SimpleTokenizer
