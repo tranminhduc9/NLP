@@ -100,6 +100,8 @@
     python -m test.lab2_test  
     ```
 
+    - Lab 3: Chạy từng cell code trong `23001518_TranMinhDuc_Lab3_NLP.ipynb` trong notebooks
+
     - Lab 4\ Lab_4_ebeeding_trainning \ Lab4_spark_word2vec:
     ```bash
     python -m test.lab4_test
