@@ -17,3 +17,4 @@ evaluate
 conllu
 pyspark == 3.5.7
 gensim
+pyspark[sql]

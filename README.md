@@ -39,6 +39,10 @@
 - Cách cài đặt thủ công mô hình Bag-of-Words.
 - Cách tích hợp tokenizer vào vectorizer.
 
+## 📌 Lab 3: Visualize model with PCA and T-SNE
+### Nội dung thực hiện
+
+
 
 ## 📌 Lab 4: Word Embedding
 ### Nội dung thực hiện
