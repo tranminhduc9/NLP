@@ -222,7 +222,7 @@ Kết quả đánh giá mô hình:
 - Tạo script `lab5_improvement_test.py` để so sánh nhiều mô hình.
 - Mục tiêu: cải tiến mô hình baseline.
 
-#### Tiền xử lý văn bản nâng cao:
+#### Tiền xử lý văn bản:
 Tạo hàm `preprocess_text_dataframe()` với các bước:
 1. Chuyển chữ thường (`lower`).
 2. Loại bỏ URL: `http\S+|www\S+|https\S+`.
@@ -281,17 +281,55 @@ f1_score        0.7233               0.7521               0.7676
 
 1. **Baseline Model (HashingTF + Logistic Regression)**:
    - Accuracy: 72.25% - Kết quả chấp nhận được cho pipeline đơn giản.
-   - Ưu điểm: Huấn luyện nhanh, dễ triển khai.
+   - Ưu điểm: Huấn luyện nhanh, dễ triển khai, phù hợp làm baseline.
 
 2. **Improved Model (Tiền xử lý + HashingTF + GBTClassifier)**:
    - Accuracy: 76.29% - Cải thiện **+4.04%** so với baseline.
-   - Gradient Boosted Trees xử lý tốt hơn các pattern phi tuyến.
+   - GBT mô hình phi tuyến bắt được quan hệ phức tạp giữa các đặc trưng..
 
 3. **Neural Networks Model (Tiền xử lý + HashingTF + MLP)**:
    - Accuracy: 76.46% - **Tốt nhất** (+4.21% so với baseline).
    - Kiến trúc [5000, 64, 32, 2] với 150 iterations cho kết quả vượt trội.
-   - Precision cao nhất (77.39%), cho thấy khả năng phân biệt tốt giữa các lớp.
-   - Tuy nhiên thời gian chạy là lâu nhất
+   - Precision cao nhất (77.39%), phân biệt tốt giữa các lớp.
+   - Trade-off: Thời gian huấn luyện lâu nhất.
+
+---
+
+**Phân tích hiệu quả**
+1. Tiền xử lý văn bản - Loại bỏ nhiễu
+- **Giảm nhiễu**: URL (`http://...`) và HTML tags (`<b>`, `<div>`) không mang thông tin cảm xúc, chỉ gây nhiễu.
+- **Tăng tính nhất quán**: Chuẩn hóa giúp các từ giống nhau được nhận diện đồng nhất.
+
+2. Điều chỉnh số lượng features (HashingTF)
+**Quan sát từ thực nghiệm**:
+- Baseline: 10,000 features
+- Improved (GBT): 2,000 features  
+- Neural Network: **5,000 features** → accuracy cao nhất
+
+**Nhận xét**:
+- **Quá nhiều features (10,000)**: 
+  - Tăng độ phức tạp, dễ overfit với dataset nhỏ
+  - Nhiều features không có thông tin (sparse)
+  
+- **Quá ít features (2,000)**:
+  - Collision cao (nhiều từ khác nhau hash vào cùng bucket)
+  - Mất thông tin quan trọng
+  
+- **Tối ưu (5,000)**:
+  - Cân bằng giữa thông tin và độ phức tạp
+  - Giảm collision, giữ được đủ từ vựng quan trọng
+
+**Kết luận**: Số features cần điều chỉnh phù hợp với kích thước dataset.
+
+3. Mô hình phức tạp hơn 
+
+**GBTClassifier (Gradient Boosted Trees)**
+- **Ensemble learning**: Kết hợp nhiều decision trees, mỗi cây học từ lỗi của cây trước.
+- **Xử lý phi tuyến**: Bắt được pattern phức tạp mà Logistic Regression (tuyến tính) không thể.
+
+**Neural Network (MLP)**
+- **Học representation nhiều tầng**: 5000 -> 64 -> 32 -> 2 
+- **Phi tuyến mạnh mẽ**: Cho phép học mối quan hệ phức tạp giữa features.
 
 ---
 
