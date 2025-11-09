@@ -59,17 +59,17 @@ pip install -r requirements.txt
 ### 2. Chạy test:
 #### Lab 5 - TextClassifier với Scikit-learn:
 ```bash
-python test/lab5_test.py
+python -m test.lab5_test
 ```
 
 #### Lab 5 - Baseline PySpark Sentiment Analysis:
 ```bash
-python test/lab5_spark_sentiment_analysis.py
+python -m test.lab5_spark_sentiment_analysis
 ```
 
 #### Lab 5 - So sánh các mô hình cải tiến:
 ```bash
-python test/lab5_improvement_test.py
+python -m test.lab5_improvement_test
 ```
 
 ## Nhiệm vụ
@@ -298,16 +298,26 @@ f1_score        0.7233               0.7521               0.7676
 ## Kết luận
 
 
-**Kết quả đạt được**:
+### Kết quả đạt được:
 - Hiểu được Pipeline phân loại văn bản: Văn bản đầu vào -> Tokenization -> Vectorization -> Xây dựng mô hình học máy -> Dự đoán
 - Đánh giá mô hình thông qua các chỉ số: **accuracy** , **precision**, **recall** và **f1_score**
 - Xây dựng Pipeline phân loại văn bản với PySpark.
 - Cải thiện kết quả bài toán thông qua việc tiền xử lý và sử dụng các mô hình mạnh mẽ hơn.
 
-**Bài học quan trọng**:
-- **Tiền xử lý văn bản** (loại bỏ noise, chuẩn hóa) giúp cải thiện accuracy đáng kể.
-- **Thay đổi các tham số** ảnh hưởng trực tiếp đến kết quả -> Để tìm được mô hình tốt nhất cũng như tham số tối ưu thì phải thử các tham số khác nhau.
-- **Mô hình phức tạp hơn** (GBT, MLP) thường cho kết quả tốt hơn nhưng cần thời gian huấn luyện lâu hơn.
+### Học được
+  1. **lab5_test.py**
+    - Cách xây dựng pipeline phân loại văn bản hoàn chỉnh.
+    - Tích hợp tokenizer, vectorizer vào classifier.
+    - Sử dụng các metrics đánh giá mô hình phân loại.
+  
+  2. **lab5_spark_sentiment_analysis.py**
+    - Xây dựng pipeline Machine Learning với PySpark MLlib.
+    - Xử lý dữ liệu văn bản quy với Spark DataFrame.
+  
+  3. **lab5_improvement_test.py**
+    - Tầm quan trọng của **tiền xử lý văn bản** và **số lượng features** (HashingTF) trong việc cải thiện accuracy.
+    - So sánh hiệu suất các mô hình: Logistic Regression vs GBTClassifier vs Neural Network.
+    - Trade-off giữa **độ chính xác** và **thời gian huấn luyện**.
 
 
 
