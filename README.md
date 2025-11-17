@@ -166,6 +166,93 @@
     - So sánh hiệu suất các mô hình: Logistic Regression vs GBTClassifier vs Neural Network.
     - Trade-off giữa **độ chính xác** và **thời gian huấn luyện**.
 
+## 📌 Lab 5.1: Deep Learning for NLP
+
+### Lab 5 Part 1: Introduction to PyTorch
+#### Nội dung thực hiện
+  - **Task 1: Tensor Operations**
+      + Tạo tensor từ list, NumPy array, random values.
+      + Các phép toán: cộng, nhân, matrix multiplication.
+      + Indexing, slicing và reshape tensor.
+      + Thuộc tính: shape, dtype, device.
+  - **Task 2: Autograd**
+      + Tính đạo hàm tự động với `requires_grad=True`.
+      + Sử dụng `.backward()` để tính gradient.
+      + Gradient accumulation và `retain_graph=True`.
+  - **Task 3: Neural Network Modules**
+      + **nn.Linear**: Fully connected layer (5 dims → 2 dims).
+      + **nn.Embedding**: Chuyển word indices thành dense vectors (10 từ → 3 dims).
+      + **nn.Module**: Xây dựng mô hình tùy chỉnh với Embedding → Linear → ReLU → Output.
+
+#### Học được
+  - Tensor operations là nền tảng cho Deep Learning.
+  - Autograd giúp tính gradient tự động cho backpropagation.
+  - Xây dựng neural networks với torch.nn modules.
+  - Kiến trúc cơ bản: Embedding → Hidden layers → Output.
+
+---
+
+### Lab 5 Part 2: RNNs for Text Classification
+#### Nội dung thực hiện
+  - **Dataset**: HWU64 Intent Classification (64 lớp intent, 8954 train / 1076 val / 1076 test).
+  - **Task 1: Baseline - TF-IDF + Logistic Regression**
+      + TfidfVectorizer (5000 features) + LogisticRegression.
+
+  - **Task 2: Word2Vec + Dense Neural Network**
+      + Huấn luyện Word2Vec (vector_size=200, sg=1, epochs=20).
+      + Chuyển câu thành vector trung bình.
+      + Dense network: 200 → 256 → 128 → 64 classes.
+
+  - **Task 3: Pre-trained Embedding + Bi-LSTM**
+      + Tokenize + Padding (max_len=50).
+      + Embedding Matrix từ Word2Vec (trainable=False).
+      + Bidirectional LSTM (128 + 64 units).
+
+  - **Task 4: Embedding from Scratch + Bi-LSTM**
+      + Embedding learnable (200 dims, trainable=True).
+      + Bidirectional LSTM với same architecture.
+
+  - **Task 5: So sánh và đánh giá**
+      + Định lượng: F1-score macro trên test set.
+      + Định tính: Test trên 20 câu.
+
+#### Học được
+  - **RNN/LSTM** bắt được thứ tự từ, tốt hơn lấy trung bình của chuỗi rồi phân loại.
+  - **Embedding from scratch** tốt hơn pre-trained khi có đủ data và task chuyên biệt.
+  - **Bidirectional LSTM** mạnh mẽ với text classification (context 2 chiều).
+  - Các kỹ thuật: Dropout, BatchNorm, EarlyStopping, ReduceLROnPlateau.
+
+---
+
+### Lab 5 Part 3: RNNs for POS Tagging
+#### Nội dung thực hiện
+  - **Dataset**: UD English-EWT (Universal Dependencies) - 17 UPOS tags.
+  - **Task 1: Chuẩn bị dữ liệu**
+      + Load CoNLL-U format (train: 12,543 câu / dev: 2,001 / test: 2,077).
+      + Xây dựng vocabulary: 19,675 từ, 17 POS tags.
+  - **Task 2: PyTorch Dataset và DataLoader**
+      + Custom POSDataset class.
+      + Padding với `pad_sequence` và `collate_fn`.
+      + DataLoader với batch_size=32.
+  - **Task 3: Xây dựng mô hình SimpleRNN**
+      + Embedding (19675 → 128 dims).
+      + RNN (128 → 256 hidden).
+      + Linear (256 → 17 tags).
+  - **Task 4: Huấn luyện**
+      + Optimizer: Adam (lr=0.001).
+      + Loss: CrossEntropyLoss với ignore_index=PAD_TAG_ID.
+      + Training 5 epochs với masking.
+  - **Task 5: Đánh giá**
+      + **Dev Accuracy**: 88.46%.
+      + **Test Accuracy**: 88.15%.
+      + Dự đoán câu mới: "The quick brown fox jumps over the lazy dog".
+
+#### Học được
+  - **Sequence labeling** khác text classification (mỗi token có 1 label).
+  - **Padding và Masking** quan trọng để xử lý câu khác độ dài.
+  - **RNN** phù hợp cho POS tagging (bắt được temporal dependencies).
+---
+
 ## ⚙️ Cách chạy
 1. Cài đặt môi trường:
    ```bash
@@ -205,5 +292,7 @@
     ```bash
     python -m test.lab5_improvement_test
     ```
+
+    - Lab 5.1: Chạy từng cell code trong `23001518_TranMinhDuc_Lab5_Part1_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part2_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part3_NLP.ipynb` trong notebooks
 
 
