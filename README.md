@@ -251,6 +251,71 @@
   - **Sequence labeling** khác text classification (mỗi token có 1 label).
   - **Padding và Masking** quan trọng để xử lý câu khác độ dài.
   - **RNN** phù hợp cho POS tagging (bắt được temporal dependencies).
+
+---
+
+### Lab 5 Part 4: RNNs for Named Entity Recognition (NER)
+#### Nội dung thực hiện
+  - **Dataset**: CoNLL-2003 NER (14,041 train / 3,250 validation / 3,453 test).
+  - **Nhãn**: 9 NER tags (O, B-PER, I-PER, B-ORG, I-ORG, B-LOC, I-LOC, B-MISC, I-MISC).
+  - **Task 1: Chuẩn bị dữ liệu**
+      + Load dataset từ Hugging Face datasets.
+      + Chuyển đổi nhãn số sang nhãn string.
+      + Xây dựng vocabulary: 23,624 từ, 10 tags (9 NER + PAD).
+  - **Task 2: PyTorch Dataset và DataLoader**
+      + Custom NERDataset class.
+      + Padding với attention mask.
+      + DataLoader batch_size=32.
+  - **Task 3: Xây dựng Bidirectional LSTM**
+      + Embedding (23624 → 128 dims).
+      + Bidirectional LSTM (128 → 256×2 hidden, dropout=0.5).
+      + Linear (512 → 10 tags).
+  - **Task 4: Huấn luyện 5 epochs**
+      + Loss giảm: 0.4993 → 0.0208.
+      + Train accuracy: 92.45% → 99.90%.
+      + Valid accuracy: 90.90% → 94.69%.
+  - **Task 5: Đánh giá**
+      + **Validation**: Accuracy 94.69%, Precision 76.75%, Recall 70.23%, F1 73.35%.
+      + **Test**: Accuracy 92.67%, Precision 68.51%, Recall 61.60%, F1 64.87%.
+      + Dự đoán các câu mới.
+
+#### Học được
+  - **Bidirectional LSTM** hiệu quả cho NER (context 2 chiều).
+  - Sử dụng **seqeval** cho entity-level metrics.
+  - NER phức tạp hơn POS tagging vì cần nhận dạng cả ranh giới thực thể.
+
+---
+
+## 📌 Lab 6: Transformers và Hugging Face
+### Nội dung thực hiện
+  - **Bài 1: Masked Language Modeling (MLM)**
+      + Sử dụng pipeline "fill-mask" với BERT.
+      + Test câu: "Hanoi is the `<mask>` of Vietnam".
+      + **Kết quả**: Dự đoán "capital" với độ tin cậy 40.33%.
+  
+  - **Bài 2: Text Generation**
+      + Sử dụng pipeline "text-generation" với GPT-2.
+      + Prompt: "The best thing about learning NLP is".
+      + **Kết quả**: Văn bản mạch lạc nhưng chưa trả lời đúng trọng tâm.
+
+  - **Bài 3: Sentence Embedding**
+      + Load mô hình BERT (bert-base-uncased, 768 hidden dims).
+      + Tokenize câu: "This is a sample sentence.".
+      + Lấy hidden states từ last layer.
+      + **Mean Pooling** với attention_mask.
+      + **Kết quả**: Vector 768 chiều.
+
+### Học được
+  - **Ba kiến trúc Transformer**:
+      + Encoder-only (BERT): Hiểu ngữ cảnh → Classification, NER, QA.
+      + Decoder-only (GPT): Sinh văn bản → Text generation.
+      + Encoder-Decoder (T5): Seq2seq → Translation, Summarization.
+  - **Hugging Face Transformers**:
+      + Pipeline API đơn giản hóa việc sử dụng mô hình.
+  - **Masked Language Modeling**: BERT dự đoán từ bị mask bằng bidirectional context.
+  - **Text Generation**: GPT sinh văn bản.
+  - **Sentence Embedding**: Mean pooling với attention mask tạo vector biểu diễn câu.
+
 ---
 
 ## ⚙️ Cách chạy
@@ -293,6 +358,8 @@
     python -m test.lab5_improvement_test
     ```
 
-    - Lab 5.1: Chạy từng cell code trong `23001518_TranMinhDuc_Lab5_Part1_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part2_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part3_NLP.ipynb` trong notebooks
+    - Lab 5.1: Chạy từng cell code trong `23001518_TranMinhDuc_Lab5_Part1_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part2_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part3_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part4_NLP.ipynb` trong notebooks
+
+    - Lab 6: Chạy từng cell code trong `23001518_TranMinhDuc_Lab6_NLP.ipynb` trong notebooks
 
 
