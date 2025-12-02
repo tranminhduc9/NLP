@@ -39,6 +39,14 @@ Sử dụng thư viện **spaCy** - một trong những thư viện NLP mạnh m
 - Hỗ trợ: tokenization, POS tagging, dependency parsing, NER
 - Phù hợp cho các tác vụ cơ bản
 
+**Code:**
+```python
+# Cài đặt Spacy
+!pip install -U spacy
+# Tải mô hình ngôn ngữ tiếng Anh
+!python -m spacy download en_core_web_sm
+```
+
 ### 1.2. Load mô hình và phân tích câu
 
 **Câu test đầu tiên:** "The quick brown fox jumps over the lazy dog."
@@ -48,6 +56,19 @@ Mô hình spaCy tự động phân tích:
 - Gán POS tags
 - Xây dựng cây phụ thuộc
 - Xác định quan hệ giữa các từ
+
+**Code:**
+```python
+import spacy
+from spacy import displacy
+
+# Sử dụng en_core_web_sm vì nó đã được cài đặt và cung cấp các tính năng cơ bản cho phân tích cú pháp
+nlp = spacy.load("en_core_web_sm")
+# Câu ví dụ
+text = "The quick brown fox jumps over the lazy dog."
+# Phân tích câu với pipeline của spaCy
+doc = nlp(text)
+```
 
 ---
 
@@ -61,6 +82,12 @@ Mô hình spaCy tự động phân tích:
 - Hiển thị cây phụ thuộc với các mũi tên cong
 - Gán nhãn dependency relations
 - Có thể render dưới dạng HTML hoặc SVG
+
+**Code:**
+```python
+# Khởi chạy server tại http://127.0.0.1:5000
+displacy.serve(doc, style="dep")
+```
 
 ### 2.2. Kết quả trực quan hóa
 
@@ -104,6 +131,21 @@ Mỗi token trong spaCy có các thuộc tính quan trọng:
 
 **Câu:** "Apple is looking at buying U.K. startup for $1 billion"
 
+**Code:**
+```python
+# Lấy một câu khác để phân tích
+text = "Apple is looking at buying U.K. startup for $1 billion"
+doc = nlp(text)
+# In ra thông tin của từng token
+print(f"{'TEXT':<12} | {'DEP':<10} | {'HEAD TEXT':<12} | {'HEAD POS':<8} | {'CHILDREN'}")
+print("-" * 70)
+
+for token in doc:
+    # Trích xuất các thuộc tính
+    children = [child.text for child in token.children]
+    print(f"{token.text:<12} | {token.dep_:<10} | {token.head.text:<12} | {token.head.pos_:<8} | {children}")
+```
+
 **Kết quả phân tích từng token:**
 
 ```
@@ -146,6 +188,26 @@ billion      | pobj       | for          | ADP      | ['$']
 
 **Câu test:** "The cat chased the mouse and the dog watched them."
 
+**Code:**
+```python
+text = "The cat chased the mouse and the dog watched them."
+doc = nlp(text)
+for token in doc:
+    # Chỉ tìm các động từ
+    if token.pos_ == "VERB":
+        verb = token.text
+        subject = ""
+        obj = ""
+        # Tìm chủ ngữ (nsubj) và tân ngữ (dobj) trong các con của động từ
+        for child in token.children:
+            if child.dep_ == "nsubj":
+                subject = child.text
+            if child.dep_ == "dobj":
+                obj = child.text
+        if subject and obj:
+            print(f"Found Triplet: ({subject}, {verb}, {obj})")
+```
+
 **Kết quả:**
 ```
 Found Triplet: (cat, chased, mouse)
@@ -176,6 +238,22 @@ Found Triplet: (dog, watched, them)
 4. Thu thập các child có `dep_ == "amod"` (adjectival modifier)
 
 **Câu test:** "The big, fluffy white cat is sleeping on the warm mat."
+
+**Code:**
+```python
+text = "The big, fluffy white cat is sleeping on the warm mat."
+doc = nlp(text)
+for token in doc:
+    # Chỉ tìm các danh từ
+    if token.pos_ == "NOUN":
+        adjectives = []
+        # Tìm các tính từ bổ nghĩa (amod) trong các con của danh từ
+        for child in token.children:
+            if child.dep_ == "amod":
+                adjectives.append(child.text)
+        if adjectives:
+            print(f"Danh từ '{token.text}' được bổ nghĩa bởi các tính từ: {adjectives}")
+```
 
 **Kết quả:**
 ```
@@ -210,6 +288,46 @@ Danh từ 'mat' được bổ nghĩa bởi các tính từ: ['warm']
 1. Duyệt qua tất cả tokens trong doc
 2. Kiểm tra token nào có `dep_ == "ROOT"`
 3. Trả về token đó
+
+**Code:**
+```python
+def find_main_verb(doc):
+    """
+    Tìm động từ chính của câu (ROOT verb)
+
+    Args:
+        doc: Đối tượng Doc của spaCy
+
+    Returns:
+        Token là động từ chính (có dep_ == "ROOT")
+    """
+    for token in doc:
+        if token.dep_ == "ROOT":
+            return token
+    return None
+
+# Test hàm với các câu ví dụ
+test_sentences = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Apple is looking at buying U.K. startup for $1 billion",
+    "The cat chased the mouse and the dog watched them.",
+    "I love learning Natural Language Processing."
+]
+
+for sentence in test_sentences:
+    doc = nlp(sentence)
+    main_verb = find_main_verb(doc)
+
+    if main_verb:
+        print(f"\nCâu: {sentence}")
+        print(f" Động từ chính: '{main_verb.text}'")
+        print(f" POS tag: {main_verb.pos_}")
+        print(f" Lemma: {main_verb.lemma_}")
+        print(f" Dependency: {main_verb.dep_}")
+    else:
+        print(f"\nCâu: {sentence}")
+        print(" Không tìm thấy động từ chính!")
+```
 
 **Kết quả test:**
 
@@ -249,6 +367,76 @@ Một cụm danh từ (noun phrase) bao gồm:
 3. Thu thập các children với dependency thuộc danh sách trên
 4. Sắp xếp theo vị trí trong câu
 5. Ghép thành cụm danh từ hoàn chỉnh
+
+**Code:**
+```python
+def extract_noun_chunks(doc):
+    """
+    Trích xuất các cụm danh từ từ câu
+
+    Một cụm danh từ bao gồm:
+    - Danh từ chính (head noun)
+    - Các từ bổ nghĩa: det (determiner), amod (adjective), compound (noun compound), etc.
+
+    Args:
+        doc: Đối tượng Doc của spaCy
+
+    Returns:
+        List các cụm danh từ (mỗi cụm là một string)
+    """
+    noun_chunks = []
+    processed_tokens = set()
+
+    for token in doc:
+        # Tìm các danh từ hoặc đại từ làm head
+        if token.pos_ in ["NOUN", "PROPN", "PRON"] and token.i not in processed_tokens:
+            chunk_tokens = []
+
+            # Thu thập các từ bổ nghĩa (children) của danh từ
+            for child in token.children:
+                if child.dep_ in ["det", "amod", "compound", "nummod", "poss"]:
+                    chunk_tokens.append(child)
+                    processed_tokens.add(child.i)
+
+            # Thêm danh từ chính
+            chunk_tokens.append(token)
+            processed_tokens.add(token.i)
+
+            # Sắp xếp theo vị trí trong câu
+            chunk_tokens.sort(key=lambda x: x.i)
+
+            # Tạo chuỗi từ các token
+            chunk_text = " ".join([t.text for t in chunk_tokens])
+            noun_chunks.append({
+                'text': chunk_text,
+                'root': token.text
+            })
+
+    return noun_chunks
+
+# Test hàm với các câu ví dụ
+test_sentences = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Apple is looking at buying U.K. startup for $1 billion",
+    "The big fluffy white cat sleeps on the warm comfortable mat."
+]
+
+for sentence in test_sentences:
+    doc = nlp(sentence)
+
+    # So sánh với noun_chunks có sẵn của spaCy
+    spacy_chunks = [chunk.text for chunk in doc.noun_chunks]
+    my_chunks = extract_noun_chunks(doc)
+
+    print(f"\nCâu: {sentence}")
+    print('Spacy chunks')
+    for chunk in spacy_chunks:
+        print(f"   {chunk}")
+
+    print(f"My chunks:")
+    for chunk in my_chunks:
+        print(f"   {chunk['text']} (root: {chunk['root']})")
+```
 
 **So sánh với spaCy:**
 
@@ -301,6 +489,61 @@ Một cụm danh từ (noun phrase) bao gồm:
 3. Di chuyển lên head của token
 4. Lặp lại cho đến khi gặp ROOT
 5. Trả về danh sách các token trên đường đi
+
+**Code:**
+```python
+def get_path_to_root(token):
+    """
+    Tìm đường đi từ một token bất kỳ lên đến gốc (ROOT) của cây
+
+    Args:
+        token: Token cần tìm đường đi
+
+    Returns:
+        List các token trên đường đi từ token hiện tại đến ROOT
+    """
+    path = [token]
+    current = token
+
+    # Duyệt lên theo head cho đến khi gặp ROOT
+    while current.dep_ != "ROOT":
+        current = current.head
+        path.append(current)
+    path.append('ROOT')
+    return path
+
+def get_distance_to_root(token):
+    """
+    Tính khoảng cách (số bước) từ token đến ROOT
+
+    Args:
+        token: Token cần tính khoảng cách
+
+    Returns:
+        Số bước từ token đến ROOT
+    """
+    path = get_path_to_root(token)
+    return len(path) - 2  # Không tính token hiện tại + ROOT
+
+# Test hàm với câu ví dụ
+test_sentence = "The quick brown fox jumps over the lazy dog."
+doc = nlp(test_sentence)
+
+print(f"\nCâu: {test_sentence}\n")
+
+# Chọn một số token để demo
+demo_tokens = [doc[0], doc[2], doc[8]]  # "The", "brown", "dog"
+
+for token in demo_tokens:
+    path = get_path_to_root(token)
+    distance = get_distance_to_root(token)
+    print(f'Đường đi của {token} đến ROOT là')
+    pp = ''
+    for p in path:
+        pp += str(p) + ' -> '
+    print(pp[:-4])
+    print(f'Khoảng cách từ {token} đến ROOT là {distance}')
+```
 
 **Câu test:** "The quick brown fox jumps over the lazy dog."
 
