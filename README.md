@@ -6,6 +6,43 @@
 
 ---
 
+## 📁 Cấu trúc thư mục
+
+```
+NLP/
+├── README.md                    # Tài liệu tổng quan dự án
+├── requirements.txt             # Dependencies
+├── data/                        # Datasets
+│   ├── hwu/                    # HWU64 Intent Classification
+│   ├── UD_English-EWT/         # Universal Dependencies corpus
+│   ├── sentiments.csv          # Sentiment Analysis data
+│   └── overall_data.md         # Tài liệu chi tiết datasets
+├── notebooks/                   # Jupyter Notebooks
+│   ├── 23001518_TranMinhDuc_Lab3_NLP.ipynb
+│   ├── 23001518_TranMinhDuc_Lab5_Part1-4_NLP.ipynb
+│   ├── 23001518_TranMinhDuc_Lab6_NLP.ipynb
+│   ├── 23001518_TranMinhDuc_Lab7_NLP.ipynb
+│   
+├── Report/                      # Báo cáo chi tiết từng lab
+│   ├── Lab1.md - Lab7.md
+│   └── LabX.md                 # Nghiên cứu Text-to-Speech
+├── results/                     # Models đã huấn luyện
+│   └── word2vec_ewt.model
+├── src/                         # Source code modules
+│   ├── core/                   # Dataset loaders, interfaces
+│   ├── models/                 # TextClassifier
+│   ├── preprocessing/          # Tokenizers
+│   └── representations/        # Vectorizers, Embedders
+├── test/                        # Unit tests
+│   ├── lab1_test.py - lab5_test.py
+│   ├── lab4_embedding_trainning_demo.py
+│   ├── lab4_spark_word2vec_demo.py
+│   └── lab5_improvement_test.py
+└── tasks/                       # Task definitions
+```
+
+---
+
 ## 📌 Lab 1: Tokenization
 ### Nội dung thực hiện
 - Xây dựng **interface `Tokenizer`**.
@@ -318,6 +355,78 @@
 
 ---
 
+## 📌 Lab 7: Dependency Parsing
+### Nội dung thực hiện
+  - **Phần 1: Cài đặt**
+      + Cài đặt thư viện **spaCy**.
+      + Tải mô hình ngôn ngữ tiếng Anh `en_core_web_sm`.
+  
+  - **Phần 2: Phân tích và trực quan hóa**
+      + Load mô hình spaCy và phân tích câu.
+      + Sử dụng **displaCy** để trực quan hóa cây phụ thuộc.
+      + Khởi chạy server tại http://127.0.0.1:5000 để xem cây phụ thuộc.
+  
+  - **Phần 3: Truy cập các thành phần trong cây**
+      + Truy cập các thuộc tính token: `text`, `pos_`, `dep_`, `head`, `children`.
+      + Phân tích câu "Apple is looking at buying U.K. startup for $1 billion".
+      + Hiểu quan hệ giữa token, head và children trong cây phụ thuộc.
+  
+  - **Phần 4: Duyệt cây để trích xuất thông tin**
+      + **Bài toán 4.1**: Tìm chủ ngữ (nsubj) và tân ngữ (dobj) của động từ.
+        - Test: "The cat chased the mouse and the dog watched them."
+        - Kết quả: (cat, chased, mouse) và (dog, watched, them).
+      + **Bài toán 4.2**: Tìm tính từ bổ nghĩa (amod) cho danh từ.
+        - Test: "The big, fluffy white cat is sleeping on the warm mat."
+        - Kết quả: cat → [big, fluffy, white], mat → [warm].
+  
+  - **Phần 5: Bài tập tự luyện**
+      + **Bài 1**: Tìm động từ chính (ROOT) của câu.
+        - Viết hàm `find_main_verb(doc)` trả về token có `dep_ == "ROOT"`.
+        - Test 4 câu và hiển thị động từ chính, POS tag, lemma.
+      
+      + **Bài 2**: Trích xuất các cụm danh từ (Noun Chunks).
+        - Viết hàm `extract_noun_chunks(doc)` tự động trích xuất cụm danh từ.
+        - Thu thập danh từ và các từ bổ nghĩa: det, amod, compound, nummod, poss.
+        - So sánh kết quả với `.noun_chunks` có sẵn của spaCy.
+      
+      + **Bài 3**: Tìm đường đi ngắn nhất trong cây.
+        - Viết hàm `get_path_to_root(token)` tìm đường đi từ token lên ROOT.
+        - Viết hàm `get_distance_to_root(token)` tính số bước đến ROOT.
+
+### Học được
+  - **Dependency Parsing**: Hiểu cấu trúc cây phụ thuộc và các quan hệ giữa từ.
+  - **spaCy**: Sử dụng thư viện mạnh mẽ cho phân tích cú pháp phụ thuộc.
+  - **displaCy**: Trực quan hóa cây phụ thuộc giúp hiểu rõ cấu trúc câu.
+  - **Trích xuất thông tin**: Tìm Subject-Verb-Object, tính từ bổ nghĩa, noun chunks.
+  - **Thuật toán trên cây**: Duyệt cây, tìm đường đi, tính khoảng cách, LCA.
+  - **Ứng dụng thực tế**: Information Extraction, Question Answering, Knowledge Graph Construction.
+
+---
+
+## 📌 Lab X: Text-to-Speech (Nghiên cứu)
+### Nội dung nghiên cứu
+  - **Lịch sử phát triển TTS**:
+      + Giai đoạn truyền thống: Concatenative, Formant, Articulatory Synthesis.
+      + Kỷ nguyên Deep Learning: WaveNet (2016), Tacotron (2017).
+      + Thế hệ hiện đại: Tacotron 2, FastSpeech, VITS, Neural Codec Models.
+  
+  - **Kiến trúc TTS hiện đại**:
+      + Pipeline: Text Analysis → Acoustic Model → Vocoder → Audio.
+      + **Tacotron 2**: Character Embeddings → Encoder → Attention → Decoder → Post-net.
+      + **FastSpeech 2**: Feed-Forward Transformer + Variance Adaptors (duration, pitch, energy).
+      + **HiFi-GAN**: GAN-based vocoder với Multi-receptive field fusion.
+  
+  - **Kỹ thuật nâng cao**:
+      + Multi-Speaker TTS: Speaker embeddings, Zero-shot voice cloning.
+      + TTS biểu cảm: Style Tokens, Reference Encoder, emotion control.
+      + Cross-lingual TTS: IPA phonemes, language embeddings, transfer learning.
+  
+  - **Thách thức & Tương lai**:
+      + Ngữ điệu tự nhiên, zero-shot cloning, mô hình thống nhất.
+      + Hiệu năng on-device, phát hiện Deepfake, watermarking.
+
+---
+
 ## ⚙️ Cách chạy
 1. Cài đặt môi trường:
    ```bash
@@ -361,5 +470,7 @@
     - Lab 5.1: Chạy từng cell code trong `23001518_TranMinhDuc_Lab5_Part1_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part2_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part3_NLP.ipynb`, `23001518_TranMinhDuc_Lab5_Part4_NLP.ipynb` trong notebooks
 
     - Lab 6: Chạy từng cell code trong `23001518_TranMinhDuc_Lab6_NLP.ipynb` trong notebooks
+
+    - Lab 7: Chạy từng cell code trong `23001518_TranMinhDuc_Lab7_NLP.ipynb` trong notebooks
 
 
